@@ -7,6 +7,8 @@ export function NewsProvider({ children }) {
   const [result, setResult] = useState([]);
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [error, setError] = useState("");
 
   function handleSearch(event) {
@@ -46,6 +48,8 @@ export function NewsProvider({ children }) {
       })
       .finally(() => {
         setIsLoading(false);
+        setSelectedCountry("");
+        setSelectedCategory("");
       });
   }
 
@@ -61,6 +65,10 @@ export function NewsProvider({ children }) {
         error,
         setError,
         handleSearch,
+        selectedCountry,
+        setSelectedCountry,
+        selectedCategory,
+        setSelectedCategory,
       }}
     >
       {children}

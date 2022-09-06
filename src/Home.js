@@ -17,7 +17,69 @@ function Home() {
     handleSearch,
     query,
     setQuery,
+    selectedCountry,
+    setSelectedCountry,
+    selectedCategory,
+    setSelectedCategory,
   } = useContext(NewsContext);
+
+  useEffect(() => {
+    debugger;
+    if (selectedCategory) {
+      setIsLoading(true);
+      setError("");
+      fetch(
+        `https://newsapi.org/v2/top-headlines?q=${selectedCategory}&apiKey=de713b26887d4c68a61209262645aa51`
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          if (data.status === "ok") {
+            console.log(data.articles[0]);
+            setResult(data.articles);
+          } else {
+            throw new Error("Error fetching news");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          // alert(error.toString());
+          setError(error.toString());
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    debugger;
+    if (selectedCountry) {
+      setIsLoading(true);
+      setError("");
+      fetch(
+        `https://newsapi.org/v2/top-headlines?country=${selectedCountry}&apiKey=de713b26887d4c68a61209262645aa51`
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          if (data.status === "ok") {
+            console.log(data.articles[0]);
+            setResult(data.articles);
+          } else {
+            throw new Error("Error fetching news");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          // alert(error.toString());
+          setError(error.toString());
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+  }, [selectedCountry]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -50,7 +112,6 @@ function Home() {
       <Loader />
       <CustomError />
       <Navbar />
-
       {query && (
         <div className="search-meta">
           <div className="wrapper">
@@ -67,6 +128,52 @@ function Home() {
         className="news-container"
         style={{ marginTop: `${query}` ? "2em" : "4em" }}
       >
+        <div className="wrapper">
+          <div className="row filters">
+            <form className="col-4">
+              <select
+                value={selectedCountry}
+                onChange={(event) => {
+                  if (!event.target.value) {
+                    setSelectedCountry("us");
+                    return;
+                  }
+                  setSelectedCountry(event.target.value);
+                  setSelectedCategory("");
+                  setQuery("");
+                }}
+              >
+                <option value="">Select country</option>
+                <option value="us">US</option>
+                <option value="in">India</option>
+                <option value="ae">UAE</option>
+                <option value="no">Norway</option>
+              </select>
+
+              <select
+                value={selectedCategory}
+                onChange={(event) => {
+                  if (!event.target.value) {
+                    setSelectedCountry("us");
+                    setSelectedCategory("");
+                    return;
+                  }
+
+                  setSelectedCategory(event.target.value);
+                  setSelectedCountry("");
+                  setQuery("");
+                }}
+              >
+                <option value="">Select Category</option>
+                <option value="technology">Technology</option>
+                <option value="travel">Travel</option>
+                <option value="science">Science</option>
+                <option value="movies">Movies</option>
+              </select>
+            </form>
+          </div>
+        </div>
+
         {result.length > 0 ? (
           <div className="wrapper">
             {result.map((news, idx) => {
